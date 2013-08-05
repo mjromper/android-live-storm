@@ -91,6 +91,10 @@
 	    $('#article').html('<div><h3><a href="'+ article.url +'" target="_blank">'+ article.title +'</a></h3></div><div class="row">'+ extra +'<div class="span12"><p>'+ nl2br(article.text) +'</p></div></div></td></tr>');
 	  });
 
+	  socket.on('geolocation', function(data) {
+	  	console.log('LOCATION', data);
+	  });
+
 	function replaceURLWithHTMLLinks(text) {
 	    var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
 	    return text.replace(exp,"<a href='$1' target='_blank'>$1</a>"); 

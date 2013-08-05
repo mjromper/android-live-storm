@@ -7,6 +7,7 @@ sub.subscribe("links");
 sub.subscribe("market");
 sub.subscribe("retweets");
 sub.subscribe("articles");
+sub.subscribe("geolocation");
 
 app.listen(8080);
 

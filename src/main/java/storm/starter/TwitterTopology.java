@@ -12,6 +12,7 @@ import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
+import storm.starter.bolt.RedisLocationBolt;
 
 public class TwitterTopology {
 
@@ -31,6 +32,9 @@ public class TwitterTopology {
 		
 		//Tags publishing
 		builder.setBolt("tags", new RedisTagsPublisherBolt("tags")).shuffleGrouping("filter");
+                
+                //Geolocation 
+		builder.setBolt("geolocation", new RedisLocationBolt(), 2).shuffleGrouping("filter");
 		
 		//Retweets
 		builder.setBolt("retweets", new RedisRetweetBolt(3), 2).shuffleGrouping("filter");
