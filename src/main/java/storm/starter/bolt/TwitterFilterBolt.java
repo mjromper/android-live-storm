@@ -11,6 +11,7 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
+import storm.starter.spout.TwitterSampleSpout;
 
 public class TwitterFilterBolt implements IRichBolt {
 
@@ -27,7 +28,7 @@ public class TwitterFilterBolt implements IRichBolt {
 			 * Do simple filtering to remove spam tweets
 			 */
 			for(HashtagEntity hashtag: hashTags) {
-				if("android".equals(hashtag.getText().toLowerCase()) ||
+				if(TwitterSampleSpout.FILTER_STRING.equals(hashtag.getText().toLowerCase()) ||
 						"androidgames".equals(hashtag.getText().toLowerCase())) {
 					count++;
 				}

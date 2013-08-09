@@ -15,6 +15,7 @@ import backtype.storm.topology.TopologyBuilder;
 import storm.starter.bolt.RedisLocationBolt;
 
 public class TwitterTopology {
+    
 
 	/**
 	 * @param args
@@ -27,14 +28,17 @@ public class TwitterTopology {
 		TwitterSampleSpout twitterSpout = new TwitterSampleSpout("tef_pdiuk", "CantStopInn0vating");
 		builder.setSpout("twitter", twitterSpout);
 		
+                             
 		//Initial filter
 		builder.setBolt("filter", new TwitterFilterBolt(), 2).shuffleGrouping("twitter");
+                
+                //Geolocation 
+                builder.setBolt("geolocation", new RedisLocationBolt(), 3).shuffleGrouping("twitter");
+                 
 		
 		//Tags publishing
 		builder.setBolt("tags", new RedisTagsPublisherBolt("tags")).shuffleGrouping("filter");
                 
-                //Geolocation 
-		builder.setBolt("geolocation", new RedisLocationBolt(), 2).shuffleGrouping("filter");
 		
 		//Retweets
 		builder.setBolt("retweets", new RedisRetweetBolt(3), 2).shuffleGrouping("filter");
@@ -42,7 +46,7 @@ public class TwitterTopology {
 		//Links
 		builder.setBolt("linkFilter", new LinkFilterBolt(), 2).shuffleGrouping("filter");
 		builder.setBolt("links", new RedisLinksPublisherBolt(), 4).shuffleGrouping("linkFilter");
-		builder.setBolt("market", new RedisMarketBolt(), 1).shuffleGrouping("links");
+		builder.setBolt("market", new RedisMarketBolt(), 2).shuffleGrouping("links");
 		builder.setBolt("articles", new RedisGooseExtractor(), 5).shuffleGrouping("retweets");
 		
 		

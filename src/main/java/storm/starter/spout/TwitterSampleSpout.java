@@ -1,7 +1,5 @@
 package storm.starter.spout;
 
-import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import backtype.storm.spout.SpoutOutputCollector;
@@ -27,6 +25,8 @@ public class TwitterSampleSpout implements IRichSpout {
     String _username;
     String _pwd;
     
+    public static String FILTER_STRING = "google";
+ 
     
     public TwitterSampleSpout(String username, String pwd) {
         _username = username;
@@ -76,7 +76,9 @@ public class TwitterSampleSpout implements IRichSpout {
         _twitterStream.addListener(listener);
         //Magic filter
         FilterQuery filter = new FilterQuery();
-        filter.track(new String[]{"android"});
+        //double[][] loc={{-0.299377d, 51.449727d}, {0.060424d, 51.57322d }}; 
+        //filter.locations(loc);
+        filter.track(new String[]{FILTER_STRING});
         _twitterStream.filter(filter);
     }
 

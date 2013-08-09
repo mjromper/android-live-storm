@@ -3,6 +3,25 @@
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css">
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script src="http://jquery-tagcloud.googlecode.com/svn/trunk/jquery.tagcloud.js"></script>
+	<link href="//api.tiles.mapbox.com/mapbox.js/v1.2.0/mapbox.css" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" href="./m2m-nitro-components/style/css/nitro-components.css" />
+
+
+	<style>
+      .mapContainer { position: relative; }
+      #map { position:relative; height: 100% }
+      .mapbox {
+        width: 100%;
+        height: 100%;
+      }
+      .m2m-dashboardmap .tooltip {
+      	z-index: 999;
+      }
+      h1 {
+      	font-size: 36px !important;
+      }
+
+    </style>
 	<script src="/socket.io/socket.io.js"></script>
 	<script> 
 	  var tags = {};
@@ -76,7 +95,7 @@
 	      }
 	    });
 	    for(var j=0; j<tweetArray.length; j++) {
-	      $('#tweets > tbody:last').prepend('<tr><td><div class="row"><div class="span3"><img src="'+ tweetArray[j].photo +'"/></div><div span="13"><blockquote><p>'+ replaceURLWithHTMLLinks(tweetArray[j].tweet) +'</p><small>'+ tweetArray[j].user +'</small></blockquote></div></div><div><p><small>Retweets:&nbsp;<span class="label success">'+ tweetArray[j].count +'</p></div></td></tr>');
+	      $('#tweets > tbody:last').prepend('<tr><td><div class="row"><div class="span3"><img src="'+ tweetArray[j].photo +'"/></div><div span="12"><blockquote><p>'+ replaceURLWithHTMLLinks(tweetArray[j].tweet) +'</p><small>'+ tweetArray[j].user +'</small></blockquote></div></div><div><p><small>Retweets:&nbsp;<span class="label success">'+ tweetArray[j].count +'</p></div></td></tr>');
 	    }
 	    $("#tweetsCount").html(tweetArray.length);
 	  });
@@ -89,10 +108,6 @@
 	    }
 	    
 	    $('#article').html('<div><h3><a href="'+ article.url +'" target="_blank">'+ article.title +'</a></h3></div><div class="row">'+ extra +'<div class="span12"><p>'+ nl2br(article.text) +'</p></div></div></td></tr>');
-	  });
-
-	  socket.on('geolocation', function(data) {
-	  	console.log('LOCATION', data);
 	  });
 
 	function replaceURLWithHTMLLinks(text) {
@@ -138,57 +153,90 @@
 			<p><a class="btn primary large" href="readme.html">Learn more</a></p>
 		</div>
 		<div class="row">
-			<div class="span6">
-				<h1>HashTags</h1>
-				<div style="position:relative">
-					<div id="tagcloud" class="well tagcloud" style="height: 200px;overflow:auto"></div>
-				</div>
-				<div>
-					<p><small>Last tag:&nbsp;<span class="label notice" id="lastTag">None yet</span></small></p>
-				</div>
-			</div>
-			<div class="span10">
-				<h1>Links</h1>
-				<div class="well" style="height: 200px;position:relative">
-					<div style="height: 190px;overflow:auto;">
-					<table id='links'>
-						<tbody>
-							<tr/>
-						</tbody>
-					</table>
+  			<div class="col-lg-6">
+  				<div class="panel panel-primary">
+					<div class="panel-heading">
+	    				<h3 class="panel-title">Hashtags</h3>
+	  				</div>
+					<div style="position:relative">
+						<div id="tagcloud" class="well tagcloud" style="height: 240px;overflow:auto"></div>
 					</div>
+					<div>
+						<p><small>Last tag:&nbsp;<span class="label notice" id="lastTag">None yet</span></small></p>
+					</div>
+				</div>	
+  			</div>
+  			<div class="col-lg-6">
+  				<div class="panel panel-primary">
+					<div class="panel-heading">
+	    				<h3 class="panel-title">Links</h3>
+	  				</div>
+					<div class="well" style="height: 240px;position:relative">
+						<div style="height: 200px;overflow:auto;">
+						<table id='links'>
+							<tbody>
+								<tr/>
+							</tbody>
+						</table>
+						</div>
+					</div>
+					<div>
+	                        <p><small>Links so far:&nbsp;<span class="label notice" id="linksCount">0</span></small></p>
+	                </div>
+				</div>		
+  			</div>
+		</div>
+			
+		<div class="row">
+  			<div class="col-lg-6">			
+				<div class="panel panel-info">
+						<div class="panel-heading">
+		    				<h3 class="panel-title">Relevant Retweets</h3>
+		  				</div>
+		            <div class="well" style="height:240px;position:relative">
+		                <div style="height:180px;overflow:auto;">
+		                <table id="tweets">
+		                    <tbody>
+		                        <tr/>
+		                    </tbody>
+		                </table>
+		                </div>
+		            </div>
+		            <div>
+		                <p><small>Tweets:&nbsp;<span class="label notice" id="tweetsCount">0</p>
+		            </div>
+		        </div>
+		    </div>    
+		    <div class="col-lg-6">	
+		        <div class="panel panel-info">
+						<div class="panel-heading">
+		    				<h3 class="panel-title">Last relevant article</h3>
+		  				</div>
+		            <div class="well" style="height:240px;position:relative">
+		                <div id="article" style="height:180px;overflow:auto;">
+		                
+		                </div>
+		            </div>
+		        </div>
+	     	</div> 
+	    </div> 	  
+
+        <div class="panel panel-danger">
+				<div class="panel-heading">
+    				<h3 class="panel-title">Tweets Location (if available)</h3>
+  				</div>
+				<div class="well" style=" height: 500px">
+					<div id="map" ></div>  
 				</div>
 				<div>
-                                        <p><small>Links so far:&nbsp;<span class="label notice" id="linksCount">0</span></small></p>
-                                </div>
-			</div>
+					<p><small>Locations so far:&nbsp;<span class="label notice" id="locationsNumber">None yet</span></small></p>
+				</div>
 		</div>
-		<div class="span16">
-            <h1>Relevant tweets</h1>
-            <div class="well" style="height:200px;position:relative">
-                <div style="height:180px;overflow:auto;">
-                <table id="tweets">
-                    <tbody>
-                        <tr/>
-                    </tbody>
-                </table>
-                </div>
-            </div>
-            <div>
-                <p><small>Tweets:&nbsp;<span class="label notice" id="tweetsCount">0</p>
-            </div>
-        </div>
-        <div class="span16">
-            <h1>Last relevant article</h1>
-            <div class="well" style="height:200px;position:relative">
-                <div id="article" style="height:180px;overflow:auto;">
-                
-                </div>
-            </div>
-        </div>
-		<div class="row">
-			<div class="span16">
-				<h1>Apps</h1>
+
+        <div class="panel panel-primary">
+				<div class="panel-heading">
+    				<h3 class="panel-title">Apps</h3>
+  				</div>
 				<div class="well" style="height: 400px;position:relative">
 					<div style="height: 390px;overflow:auto;">
 						<table id="apps">
@@ -201,8 +249,8 @@
 				<div>
 					<p><small>Apps so far:&nbsp;<span class="label notice" id="appsCount">0</span></small></p>
 				</div>
-			</div>
-		</div>
+		</div>		
+		
 	</div>
 </body>
 <script type="text/javascript">
@@ -218,4 +266,6 @@
   })();
 
 </script>
+<script src="/m2m-nitro-components/libs/less/less.js"></script>
+<script data-main="main" src="/m2m-nitro-components/libs/requirejs/require.js"></script>
 </html>

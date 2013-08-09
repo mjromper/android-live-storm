@@ -4,7 +4,7 @@
   "author": "Francisco Jordano <francisco@jordano.es>",
   "description": "a simple web server to serve the real time demo app",
   "dependencies" : {
-    "express" :  "2.5",
+    "express" :  "3.x",
     "socket.io" : "*",
     "redis" : "*"
   },
